@@ -1,16 +1,15 @@
 using UnityEngine;
-using Unity.Cinemachine;
-using UnityEngine.UI; // ⚠️ 必須加入這行，才能控制 UI
+using UnityEngine.UI;
 
 public class MinimapZoomController : MonoBehaviour
 {
-    [Header("綁定虛擬攝影機")]
-    public CinemachineCamera minimapCam;
+    [Header("綁定實體攝影機 (替換掉原本的 Cinemachine)")]
+    public Camera minimapCam; 
 
     [Header("綁定 UI 介面")]
-    public Slider zoomSlider; // 你的拉桿
-    public Button zoomInBtn;  // 你的 + 按鈕
-    public Button zoomOutBtn; // 你的 - 按鈕
+    public Slider zoomSlider; 
+    public Button zoomInBtn;  
+    public Button zoomOutBtn; 
 
     [Header("縮放參數")]
     public float minSize = 3f;  
@@ -19,36 +18,32 @@ public class MinimapZoomController : MonoBehaviour
 
     private void Start()
     {
-        // === 初始化設定 ===
-        if (zoomSlider != null)
+        if (zoomSlider != null && minimapCam != null)
         {
             zoomSlider.minValue = minSize; 
             zoomSlider.maxValue = maxSize; 
-            // 讓拉桿一開始的位置，對齊攝影機當前的大小
-            zoomSlider.value = minimapCam.Lens.OrthographicSize;
+            // 🌟 改變點：標準 Camera 的寫法是 .orthographicSize
+            zoomSlider.value = minimapCam.orthographicSize;
 
-            // 告訴拉桿：當玩家拖動你時，去執行 OnSliderValueChanged 這個動作
             zoomSlider.onValueChanged.AddListener(OnSliderValueChanged);
         }
 
-        // 告訴按鈕：當玩家點擊你時，去執行放大/縮小動作
         if (zoomInBtn != null) zoomInBtn.onClick.AddListener(ZoomIn);
         if (zoomOutBtn != null) zoomOutBtn.onClick.AddListener(ZoomOut);
     }
 
     private void Update()
     {
-        // === 保留原本的滑鼠滾輪控制 ===
         float scrollInput = Input.mouseScrollDelta.y;
 
         if (scrollInput != 0 && minimapCam != null)
         {
-            float currentSize = minimapCam.Lens.OrthographicSize;
+            // 🌟 改變點：標準 Camera 的寫法
+            float currentSize = minimapCam.orthographicSize;
             float newSize = Mathf.Clamp(currentSize - (scrollInput * zoomSpeed), minSize, maxSize);
             
-            minimapCam.Lens.OrthographicSize = newSize;
+            minimapCam.orthographicSize = newSize;
 
-            // 【反向同步】：當玩家用滾輪縮放時，拉桿的滑塊也要跟著移動！
             if (zoomSlider != null)
             {
                 zoomSlider.value = newSize;
@@ -56,31 +51,29 @@ public class MinimapZoomController : MonoBehaviour
         }
     }
 
-    // === 方法 1: 拉桿改變 -> 攝影機改變 ===
     private void OnSliderValueChanged(float value)
     {
         if (minimapCam != null)
         {
-            minimapCam.Lens.OrthographicSize = value;
+            minimapCam.orthographicSize = value;
         }
     }
 
-    // === 方法 2: 按鈕被點擊 -> 攝影機改變 + 拉桿跟著動 ===
     public void ZoomIn()
     {
-        if (minimapCam.Lens.OrthographicSize > minSize)
+        if (minimapCam != null && minimapCam.orthographicSize > minSize)
         {
-            minimapCam.Lens.OrthographicSize -= 1f; // 每次放大減少 1
-            if (zoomSlider != null) zoomSlider.value = minimapCam.Lens.OrthographicSize;
+            minimapCam.orthographicSize -= 1f; 
+            if (zoomSlider != null) zoomSlider.value = minimapCam.orthographicSize;
         }
     }
 
     public void ZoomOut()
     {
-        if (minimapCam.Lens.OrthographicSize < maxSize)
+        if (minimapCam != null && minimapCam.orthographicSize < maxSize)
         {
-            minimapCam.Lens.OrthographicSize += 1f; // 每次縮小增加 1
-            if (zoomSlider != null) zoomSlider.value = minimapCam.Lens.OrthographicSize;
+            minimapCam.orthographicSize += 1f; 
+            if (zoomSlider != null) zoomSlider.value = minimapCam.orthographicSize;
         }
     }
 }
