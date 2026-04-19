@@ -66,6 +66,7 @@ public class MinimapSmartFollow : MonoBehaviour, IDragHandler, IBeginDragHandler
     // 當滑鼠「正在拖曳」時
     public void OnDrag(PointerEventData eventData)
     {
+        Debug.Log("滑鼠正在拖曳小地圖！數值：" + eventData.delta);
         if (minimapCamera == null) return;
 
         float zoomMultiplier = minimapCamera.orthographicSize / 5f;
