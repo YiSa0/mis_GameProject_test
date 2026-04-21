@@ -7,7 +7,7 @@ public class SignInteraction : MonoBehaviour
     public GameObject signUI;
 
     [Header("玩家判定設定")]
-    [Tooltip("把你的玩家物件拖曳到這裡。如果留空，系統會自動偵測 Tag 為 'Player' 的物件。")]
+    [Tooltip("把你的玩家物件拖曳到這裡。如果留空，系統會自動偵測 Tag 為 'Player' 或 'player' 的物件。")] // 💡 這裡更新了提示文字
     public GameObject specificPlayer;
 
     [Header("場景切換設定")]
@@ -55,7 +55,8 @@ public class SignInteraction : MonoBehaviour
     }
 
     // 👇 更新後的 EnterBuilding，加入了寫入記憶體的核心魔法
-    private void EnterBuilding()
+    // 把原本的 private 改成 public
+    public void EnterBuilding()
     {
         Debug.Log("準備進入空間：" + targetSceneName);
         
@@ -69,7 +70,8 @@ public class SignInteraction : MonoBehaviour
     // 玩家進入感應區
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") || (specificPlayer != null && other.gameObject == specificPlayer))
+        // 💡 這裡加上了 || other.CompareTag("player")
+        if (other.CompareTag("Player") || other.CompareTag("player") || (specificPlayer != null && other.gameObject == specificPlayer))
         {
             isPlayerNearby = true;
             if (signUI != null) signUI.SetActive(true);
@@ -79,7 +81,8 @@ public class SignInteraction : MonoBehaviour
     // 玩家離開感應區
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player") || (specificPlayer != null && other.gameObject == specificPlayer))
+        // 💡 這裡同樣加上了 || other.CompareTag("player")
+        if (other.CompareTag("Player") || other.CompareTag("player") || (specificPlayer != null && other.gameObject == specificPlayer))
         {
             isPlayerNearby = false;
             if (signUI != null) signUI.SetActive(false);
