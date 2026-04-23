@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.seanba.super-tiled2unity": "file:D:/Downloads/SuperTiled2Unity-master/SuperTiled2Unity-master/SuperTiled2Unity/Packages/com.seanba.super-tiled2unity",
+    "com.seanba.super-tiled2unity": "file:../LocalPackages/com.seanba.super-tiled2unity",
     "com.unity.2d.animation": "13.0.4",
     "com.unity.2d.aseprite": "3.0.1",
     "com.unity.2d.pixel-perfect": "5.1.1",
